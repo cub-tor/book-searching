@@ -94,6 +94,11 @@
 	
 	$(document).ready(function(){
 		$(document).ready(function(){
+			/*Configuración global para todas las solicitudes AJAX realizadas en la página. El token CSRF es un mecanismo de seguridad que se utiliza para proteger las aplicaciones
+			 web contra ataques de suplantación de identidad. Al incluir el token en la solicitud AJAX, 
+			 se garantiza que la solicitud proviene de la página web original y no de un sitio externo
+			  malicioso.
+			*/
 			$.ajaxSetup({
 				headers: {
 					'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -104,29 +109,32 @@
 				var texto = $("#texto").val();
 				// Validar si solo contiene letras
 				var letras = /^[a-zA-Z]+$/;
-				if(texto.match(letras)!= null) {
-					console.log(texto);
-					//llamada a ajax
-					$.ajax({ 
-						type: "POST",
-						url: "{{ url('libros/consultar') }}",
-						data: {"texto":texto},
-						success: function(data) {
-							console.log(data);
-							let resultado = "<br>";
-							for(let i=0;i<data.length;i++)
-							{
-								resultado = resultado + "<br>" + data[i].titulo; 
-							}   
-							console.log(data.length);
-							$("#sugerencias").html(resultado); //Actualiza el contenido de sugerencias
-						},
-						error: function(data) {
-							alert("fallo");
-						}
-					});
-				} else {
-				alert("Por favor, ingrese solo letras");
+				//Para que no salga el aviso al presionar la tecla de borrar: texto != ''
+				if (texto != '') {
+					if(texto.match(letras)!= null) {
+						console.log(texto);
+						//llamada a ajax
+						$.ajax({ 
+							type: "POST",
+							url: "{{ url('libros/consultar') }}",
+							data: {"texto":texto},
+							success: function(data) {
+								console.log(data);
+								let resultado = "<br>";
+								for(let i=0;i<data.length;i++)
+								{
+									resultado = resultado + "<br>" + data[i].titulo; 
+								}   
+								console.log(data.length);
+								$("#sugerencias").html(resultado); //Actualiza el contenido de sugerencias
+							},
+							error: function(data) {
+								alert("fallo");
+							}
+						});
+					} else {
+						alert("Por favor, ingrese solo letras");
+					}
 				}
 			});
 		});
@@ -136,47 +144,7 @@
 
 
 
-	/*$(document).ready(function(){
-		$(document).ready(function(){*/
-			/*Configuración global para todas las solicitudes AJAX realizadas en la página. El token CSRF es un mecanismo de seguridad que se utiliza para proteger las aplicaciones
-			 web contra ataques de suplantación de identidad. Al incluir el token en la solicitud AJAX, 
-			 se garantiza que la solicitud proviene de la página web original y no de un sitio externo
-			  malicioso.
-			*/
-			/*	$.ajaxSetup({
-					headers: {
-							'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-					}
-				});
-
-				$("#texto").keyup(function(){
-					console.log($("#texto").val());
-					//llamada a ajax
-					$.ajax({ 
-						type: "POST",
-						url: "{{ url('libros/consultar') }}",
-						data: {"texto":$("#texto").val()},
-						success: function(data) {
-							console.log(data);
-						let texto = "<br>";
-						for(let i=0;i<data.length;i++)
-						{
-							texto = texto + "<br>" + data[i].titulo; 
-
-						}	
-						console.log(data.length);
-						$("#sugerencias").html(texto); //Actualiza el contenido de sugerencias
-					},
-					error: function(data) {
-						alert("fallo");
-					}
-				}
-			);
-		});
-
-		
-	});
-  });*/
+	
 
 
 </script>
